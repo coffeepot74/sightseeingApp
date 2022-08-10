@@ -1,3 +1,3 @@
 # sightseeingApp
 
-https://coffeepot74.github.io/sightseeingApp/
+https://code4fukui.github.io/sightseeingApp/
