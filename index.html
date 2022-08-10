@@ -13,12 +13,23 @@ const data = CSV.toJSON(await CSV.fetch(urldata));
 console.log(data);
 for(const d of data){
     const a = area.find(a => d.回答エリア == a.エリア名);
-    console.log(a);
+    // console.log(a);
     const r = 0.01;
     const marker = L.marker([parseFloat(a.緯度) + Math.random()*r*2-r, parseFloat(a.経度) + Math.random()*r*2-r], 
         { icon: L.spriteIcon(d.color)});
-    marker.bindPopup(`エリア: ${d.回答エリア} <br><br> 旅行者情報: ${d.会員市町村}, ${d.年代} <br><br> 満足・不満足: ${d.満足度の理由} <br><br> 不便さ: ${d.不便さの内容} <br><br> 交通手段について: ${d.福井県内での交通手段の満足度の理由}
-        <br><br> 施設へのコメント: ${d.施設に求めるもの} <br><br> 福井へのコメント: ${d.福井県に求めるもの}`)
+    const property = {ansArea: d.回答エリア, livArea: d.会員市町村, age: d.年代, satis: d.満足度の理由, 
+        inconv : d.不便さの内容, trfc_satis: d.福井県内での交通手段の満足度の理由,
+        req_fasi: d.施設に求めるもの, req_fukui: d.福井県に求めるもの};
+    let elements ={}
+    for(const elem in property){
+        if (property[elem]) {
+            elements[elem] = property[elem]
+        } else {
+            elements[elem] = "なし"
+        }
+    }
+    marker.bindPopup(`エリア: ${elements.ansArea} <br><br> 旅行者情報: ${elements.livArea}, ${elements.age} <br><br> 満足・不満足: ${elements.satis} <br><br> 不便さ: ${elements.inconv} <br><br> 交通手段について: ${elements.trfc_satis}
+        <br><br> 施設へのコメント: ${elements.req_fasi} <br><br> 福井へのコメント: ${elements.req_fukui}`)
     marker.addTo(map);
 }
 
