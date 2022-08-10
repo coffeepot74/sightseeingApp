@@ -17,7 +17,7 @@ for(const d of data){
     const r = 0.01;
     const marker = L.marker([parseFloat(a.緯度) + Math.random()*r*2-r, parseFloat(a.経度) + Math.random()*r*2-r], 
         { icon: L.spriteIcon(d.color)});
-    marker.bindPopup(`満足・不満足: ${d.満足度の理由} <br><br> 不便さ: ${d.不便さの内容} <br><br> 交通手段について: ${d.福井県内での交通手段の満足度の理由}
+    marker.bindPopup(`エリア: ${d.回答エリア} <br><br>  満足・不満足: ${d.満足度の理由} <br><br> 不便さ: ${d.不便さの内容} <br><br> 交通手段について: ${d.福井県内での交通手段の満足度の理由}
         <br><br> 施設へのコメント: ${d.施設に求めるもの} <br><br> 福井へのコメント: ${d.福井県に求めるもの}`)
     marker.addTo(map);
 }
