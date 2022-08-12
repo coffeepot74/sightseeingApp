@@ -6,7 +6,7 @@
 import { LeafletGSI } from "https://js.sabae.cc/LeafletGSI.js";
 import { CSV } from "https://js.sabae.cc/CSV.js";
 const map = await LeafletGSI.initMap("divmap");
-map.setView([35.943, 136.19], 15);
+map.setView([35.943, 136.19], 13);
 const url = "https://code4fukui.github.io/fukui-kanko-survey/area.csv"
 const area = CSV.toJSON(await CSV.fetch(url));
 console.log(area);
