@@ -30,8 +30,20 @@ for(const d of data){
             elements[elem] = "なし"
         }
     }
-    marker.bindPopup(`エリア: ${elements.ansArea} <br><br> 旅行者情報: ${elements.livArea}, ${elements.age} <br><br> 満足・不満足: ${elements.satis} <br><br> 不便さ: ${elements.inconv} <br><br> 交通手段について: ${elements.trfc_satis}
-        <br><br> 施設へのコメント: ${elements.req_fasi} <br><br> 福井へのコメント: ${elements.req_fukui}`)
+    const showprop = [
+        { label: "満足・不満足", name: "福井県内での交通手段の満足度の理由" },
+        { label: "不便さ", name: "不便さの内容" },
+        { label: "施設へのコメント", name: "施設に求めるもの" },
+        { label: "福井へのコメント", name: "福井県に求めるもの" },
+    ];
+    let html = "";
+    html += `エリア: ${elements.ansArea} <br><br> 旅行者情報: ${elements.livArea}, ${elements.age} <br><br>`;
+    for (const s of showprop) {
+        if (d[s.name]) {
+            html += s.label + ": " + d[s.name];
+        }
+    }
+    marker.bindPopup(html);
     marker.addTo(map);
 }
 
