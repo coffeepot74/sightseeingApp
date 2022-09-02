@@ -1,8 +1,7 @@
 <h1>福井県観光アンケートコメントマップ</h1>
 <div id="divmap"></div>
-<a href=https://www.fuku-e.com/feature/detail_266.html>福井県観光データ分析システム「FTAS (FUKUI Tourism data Analizing System)」</a>の
-<a href=https://github.com/code4fukui/fukui-kanko-survey/>HAPPINESSキャンペーンアンケートオープンデータ</a>を加工して使用。
-<a href=https://github.com/coffeepot74/sightseeingApp>src on GitHub</a><br>
+<div id="filter"></div>
+<a href=https://www.fuku-e.com/feature/detail_266.html>福井県観光データ分析システム「FTAS (FUKUI Tourism data Analizing System)」</a>の<a href=https://github.com/code4fukui/fukui-kanko-survey/>HAPPINESSキャンペーンアンケートオープンデータ</a>を加工して使用。<a href=https://github.com/coffeepot74/sightseeingApp>src on GitHub</a><br>
 
 <script type="module">
 import { LeafletGSI } from "https://js.sabae.cc/LeafletGSI.js";
@@ -12,9 +11,26 @@ map.setView([35.943, 136.19], 13);
 const url = "https://code4fukui.github.io/fukui-kanko-survey/area.csv"
 const area = CSV.toJSON(await CSV.fetch(url));
 console.log(area);
-const urldata = "https://coffeepot74.github.io/sightseeingApp/data.csv"
+const urldata = "https://code4fukui.github.io/fukui-kanko-survey/all.csv";
 const data = CSV.toJSON(await CSV.fetch(urldata));
 console.log(data);
+
+const SAT = ["とても満足", "満足", "どちらでもない", "不満", "とても不満"];
+data.forEach(d => {
+    const n = SAT.indexOf(d.満足度);
+    if (n < 0) {
+        throw new Error(d.満足度);
+    }
+    d.sat = n;
+    d.color = ["blue", "blue", "yellow", "red", "red"][n];
+});
+const layers = [];
+for (let i = 0; i < SAT.length; i++) {
+    const layer = L.layerGroup();
+    layers.push(layer);
+    layer.addTo(map);
+}
+
 for(const d of data){
     const a = area.find(a => d.回答エリア == a.エリア名);
     // console.log(a);
@@ -32,23 +48,32 @@ for(const d of data){
             elements[elem] = "なし"
         }
     }
-    const showprop = [
-        { label: "満足・不満足", name: "福井県内での交通手段の満足度の理由" },
-        { label: "不便さ", name: "不便さの内容" },
-        { label: "施設へのコメント", name: "施設に求めるもの" },
-        { label: "福井へのコメント", name: "福井県に求めるもの" },
-    ];
-    let html = "";
-    html += `エリア: ${elements.ansArea} <br><br> 旅行者情報: ${elements.livArea}, ${elements.age} <br><br>`;
-    for (const s of showprop) {
-        if (d[s.name]) {
-            html += s.label + ": " + d[s.name];
-        }
-    }
-    marker.bindPopup(html);
-    marker.addTo(map);
+    marker.bindPopup(`日時: ${d.回答日時}<br><br> エリア: ${elements.ansArea} <br><br> 旅行者情報: ${elements.livArea}, ${elements.age} <br><br> 満足・不満足: ${d.満足度} - ${elements.satis} <br><br> 不便さ: ${elements.inconv} <br><br> 交通手段について: ${elements.trfc_satis}
+        <br><br> 施設へのコメント: ${elements.req_fasi} <br><br> 福井へのコメント: ${elements.req_fukui}`)
+    layers[d.sat].addLayer(marker);
 }
 
+let i = 0;
+for (const s of SAT) {
+    const label = document.createElement("label");
+    const inp = document.createElement("input");
+    inp.type = "checkbox";
+    inp.checked = true;
+    inp.sat = i;
+    const span = document.createElement("span");
+    span.textContent = s;
+    label.appendChild(inp);
+    label.appendChild(span);
+    filter.appendChild(label);
+    inp.onclick = () => {
+        if (inp.checked) {
+            map.addLayer(layers[inp.sat]);
+        } else {
+            map.removeLayer(layers[inp.sat]);
+        }
+    };
+    i++;
+}
 
 
 </script>
@@ -56,5 +81,9 @@ for(const d of data){
     #divmap {
         height: 85vh;
         width: 100%;
+    }
+    #filter {
+        text-align: center;
+        margin: .2em 0 .8em 0;
     }
 </style>
